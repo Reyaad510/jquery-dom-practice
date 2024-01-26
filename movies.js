@@ -48,16 +48,48 @@ function createMovieCard(movieName, rating) {
   newDiv.append(removeButton);
 
   $("#movie-container").append(newDiv);
-
-  removeButton.on("click", deleteMovie);
-  // Find the closest ancestor element with the class .movie-card and remove it
 }
 
 function deleteMovie() {
+  // Find the closest ancestor element with the class .movie-card and remove it
   $(this).closest(".movie-card").remove();
+}
+
+// Function to sort movie cards by title
+function sortMoviesByTitle() {
+  // Get all movie card elements and store them in an array
+  let movieCards = $(".movie-card").get();
+
+  // Sort the array of movie cards based on the movie titles
+  movieCards.sort(function (movieCardA, movieCardB) {
+    // Extract the movie titles from the first <p> element within each movie card
+    let movieTitleA = $(movieCardA).find("p:first").text().toUpperCase();
+    let movieTitleB = $(movieCardB).find("p:first").text().toUpperCase();
+
+    // Compare the movie titles and determine the sort order
+    if (movieTitleA < movieTitleB) {
+      return -1; // Movie A should appear before Movie B
+    } else if (movieTitleA > movieTitleB) {
+      return 1; // Movie A should appear after Movie B
+    } else {
+      return 0; // Movie titles are equal
+    }
+  });
+
+  // Empty the movie container and append the sorted movie cards
+  $("#movie-container").empty().append(movieCards);
 }
 
 $("#submit").on("click", function (e) {
   e.preventDefault();
   addMovie();
+});
+
+// Event listener for delete button using event delegation
+// Listens specifically for clicks on elements with the class "remove-button" that are descendants of #movie-container
+$("#movie-container").on("click", ".remove-button", deleteMovie);
+
+// Event listener for sorting by title
+$("#sortByTitle").on("click", function () {
+  sortMoviesByTitle();
 });
